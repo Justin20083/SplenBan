@@ -1,230 +1,469 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
   <title>SplenBan</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
-  <!-- Anti-flash: apply theme before first paint -->
+  <link rel="stylesheet" href="style.css"/>
   <script>
     (function(){
-      var saved = localStorage.getItem('splban_theme');
-      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      var isDark = saved ? saved === 'dark' : prefersDark;
-      if (isDark) document.documentElement.setAttribute('data-theme','dark');
+      var s=localStorage.getItem('splban_theme');
+      var d=s?s==='dark':window.matchMedia('(prefers-color-scheme:dark)').matches;
+      document.documentElement.setAttribute('data-theme',d?'dark':'light');
     })();
   </script>
 </head>
 <body>
 
-  <!-- ── Loader splash ─────────────────────────────── -->
-  <div class="splash" id="splash">
-    <div class="splash-logo">
-      <span class="splash-s">S</span>
-      <span class="splash-title">SplenBan</span>
+<!-- SPLASH -->
+<div class="splash" id="splash">
+  <div class="splash-inner">
+    <div class="splash-icon">$</div>
+    <span class="splash-name">SplenBan</span>
+  </div>
+</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeSettings()"></div>
+
+<!-- SETTINGS PANEL (reemplaza el menú de 3 puntos) -->
+<div class="settings-panel" id="settingsPanel">
+  <div class="settings-header">
+    <span class="settings-title">Configuración</span>
+    <button class="settings-close" onclick="closeSettings()">✕</button>
+  </div>
+  <div class="settings-body">
+    <div class="settings-section-label">CUENTA</div>
+    <div class="settings-row" onclick="openEditName()">
+      <div class="settings-row-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <span>Editar nombre</span>
+      <svg class="settings-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+
+    <div class="settings-section-label">APARIENCIA</div>
+    <div class="settings-row" onclick="toggleTheme()">
+      <div class="settings-row-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </div>
+      <span id="themeRowLabel">Modo claro</span>
+      <svg class="settings-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+
+    <div class="settings-section-label">DATOS</div>
+    <div class="settings-row" onclick="exportData()">
+      <div class="settings-row-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </div>
+      <span>Exportar CSV</span>
+      <svg class="settings-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+    <div class="settings-row danger" onclick="clearAllData()">
+      <div class="settings-row-icon danger">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      </div>
+      <span>Borrar todo</span>
+      <svg class="settings-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+
+    <div class="settings-section-label">ASISTENTE</div>
+    <div class="settings-row" onclick="openAIPanel();closeSettings()">
+      <div class="settings-row-icon ai">✨</div>
+      <span>Asistente IA</span>
+      <svg class="settings-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app">
+
+  <!-- ═══ TAB: HOME ═══════════════════════════════════ -->
+  <div class="tab-view active" id="tab-home">
+    <header class="topbar">
+      <button class="topbar-icon-btn" onclick="openSearchPanel()" aria-label="Buscar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="22" height="22"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <div class="topbar-spacer"></div>
+      <button class="topbar-icon-btn hex-btn" onclick="openSettings()" aria-label="Configuración">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </header>
+
+    <!-- Balance hero — negro puro arriba -->
+    <section class="hero">
+      <p class="hero-label">Saldo</p>
+      <h1 class="hero-amount" id="balanceDisplay">0.00 $</h1>
+    </section>
+
+    <!-- Divisor con glow -->
+    <div class="hero-divider">
+      <div class="hero-divider-line"></div>
+    </div>
+
+    <!-- Fondo oscuro abajo -->
+    <div class="lower-section">
+      <!-- Stats pill -->
+      <div class="stats-pill">
+        <div class="stat-col">
+          <span class="stat-lbl">Gastos:</span>
+          <span class="stat-val" id="totalExpenses">0 $</span>
+        </div>
+        <div class="stat-col">
+          <span class="stat-lbl">Ingresos:</span>
+          <span class="stat-val" id="totalIncome">0 $</span>
+        </div>
+        <div class="stat-col">
+          <span class="stat-lbl">Ingreso neto:</span>
+          <span class="stat-val" id="totalNet">0 $</span>
+        </div>
+      </div>
+
+      <!-- Chart (cuando hay datos) -->
+      <div class="chart-block" id="chartBlock" style="display:none">
+        <div class="period-bar">
+          <button class="ptab" data-period="dia"    onclick="changePeriod('dia')">Día</button>
+          <button class="ptab" data-period="semana" onclick="changePeriod('semana')">Semana</button>
+          <button class="ptab active" data-period="mes" onclick="changePeriod('mes')">Mes</button>
+          <button class="ptab" data-period="año"   onclick="changePeriod('año')">Año</button>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="financeChart"></canvas>
+          <div class="chart-tip" id="chartTooltip"></div>
+        </div>
+      </div>
+
+      <!-- Transactions / empty -->
+      <div id="transactionsList">
+        <div class="empty-state" id="emptyState">
+          <p class="empty-title">Aún no tienes transacciones</p>
+          <p class="empty-sub">Agrega tu primera transacción</p>
+          <button class="empty-plus" onclick="openModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" width="26" height="26"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- ── Side Menu overlay ─────────────────────────── -->
-  <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-
-  <!-- ── Side Menu ─────────────────────────────────── -->
-  <nav class="side-menu" id="sideMenu" aria-label="Menú principal">
-    <div class="side-menu-header">
-      <div class="side-logo">
-        <span class="splash-s small">S</span>
-        <h2>SplenBan</h2>
-      </div>
-      <button class="close-menu" onclick="toggleMenu()" aria-label="Cerrar menú">✕</button>
+  <!-- ═══ TAB: ANÁLISIS ═══════════════════════════════ -->
+  <div class="tab-view" id="tab-stats">
+    <header class="topbar plain">
+      <!-- no icons, just tabs -->
+    </header>
+    <div class="analysis-tabs-bar">
+      <button class="atab active" data-at="categorias" onclick="setATab('categorias')">Por categorías</button>
+      <button class="atab" data-at="dinamica" onclick="setATab('dinamica')">Dinámica</button>
+      <button class="atab" data-at="ingreso" onclick="setATab('ingreso')">Ingreso neto</button>
     </div>
-    <ul>
-      <li onclick="toggleMenu()" class="menu-item" style="--i:0">
-        <span class="menu-icon">🏠</span> Inicio
-      </li>
-      <li onclick="openEditName()" class="menu-item" style="--i:1">
-        <span class="menu-icon">✏️</span> Editar nombre
-      </li>
-      <li onclick="exportData()" class="menu-item" style="--i:2">
-        <span class="menu-icon">📤</span> Exportar CSV
-      </li>
-      <li onclick="clearAllData()" class="menu-item danger" style="--i:3">
-        <span class="menu-icon">🗑️</span> Borrar todo
-      </li>
-      <li onclick="toggleTheme()" class="menu-item" style="--i:4" id="menuThemeItem">
-        <span class="menu-icon">🌙</span> <span id="menuThemeLabel">Modo oscuro</span>
-      </li>
-    </ul>
-    <div class="ai-menu-section">
-      <div class="ai-menu-badge">IA</div>
-      <h3>Asistente Financiero</h3>
-      <p>Analiza tus gastos, recibe consejos y entiende tu dinero mejor</p>
-      <button class="btn-ai-analyze" onclick="openAIPanel(); toggleMenu()">
-        ✨ Analizar mis finanzas
+    <div class="analysis-filter-bar">
+      <button class="filter-pill dropdown" onclick="openPeriodDropdown()">
+        <span id="periodLabel">Este mes</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
-    </div>
-  </nav>
-
-  <!-- ══════════════════════════════════════════════════
-       LAYOUT WRAPPER — adapts mobile / tablet / desktop
-  ═══════════════════════════════════════════════════ -->
-  <div class="app-layout">
-
-    <!-- ── Sidebar (desktop only) ──────────────────── -->
-    <aside class="desktop-sidebar" aria-label="Panel lateral">
-      <div class="ds-logo">
-        <span class="splash-s small">S</span>
-        <span class="ds-brand">SplenBan</span>
+      <div class="filter-right">
+        <button class="filter-pill active" data-gi="gastos"   onclick="setGI('gastos')">Gastos</button>
+        <button class="filter-pill"        data-gi="ingresos" onclick="setGI('ingresos')">Ingresos</button>
       </div>
-      <nav class="ds-nav">
-        <div class="ds-nav-item active">📊 Dashboard</div>
-        <div class="ds-nav-item" onclick="openAIPanel()">✨ Asistente IA</div>
-        <div class="ds-nav-item" onclick="exportData()">📤 Exportar</div>
-        <div class="ds-nav-item" onclick="openEditName()">✏️ Mi perfil</div>
-        <div class="ds-nav-item ds-theme-item" onclick="toggleTheme()">
-          <span class="ds-theme-label">🌙 Modo oscuro</span>
-        </div>
-      </nav>
-      <div class="ds-footer">
-        <button class="ds-add-btn" onclick="openModal()">
-          <span>+</span> Nueva transacción
+    </div>
+    <div class="analysis-body" id="analysisBody">
+      <div class="analysis-empty">
+        <p class="empty-title">Análisis</p>
+        <p class="empty-sub">No tienes transacciones para este período</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB: PRESUPUESTOS ══════════════════════════ -->
+  <div class="tab-view" id="tab-budgets">
+    <header class="topbar centered">
+      <span class="topbar-title">Presupuestos y objetivos</span>
+    </header>
+    <div class="budgets-body" id="budgetsBody">
+      <div class="budgets-card" id="budgetsCard">
+        <!-- filled by JS -->
+        <p style="color:var(--fg3);font-size:.9rem;padding:20px 0;text-align:center">Sin presupuestos aún</p>
+      </div>
+      <div class="budgets-cta">
+        <p class="budgets-cta-title">Presupuestos y objetivos</p>
+        <p class="budgets-cta-sub">Define límites de gasto y sigue tus objetivos de ahorro</p>
+        <button class="budgets-unlock-btn" onclick="openBudgetModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Crear presupuesto
         </button>
       </div>
-    </aside>
+    </div>
+  </div>
 
-    <!-- ── Main content ─────────────────────────────── -->
-    <div class="main-content">
-
-      <!-- Header -->
-      <header class="header">
-        <div class="header-left">
-          <h1 class="user-name" id="userNameDisplay">Justin</h1>
-          <p class="welcome-text">Bienvenido de vuelta 👋</p>
+  <!-- ═══ TAB: CARTERAS ══════════════════════════════ -->
+  <div class="tab-view" id="tab-wallets">
+    <header class="topbar centered">
+      <span class="topbar-title">Carteras</span>
+      <button class="topbar-icon-btn" onclick="openModal()" style="position:absolute;right:18px;top:52px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="22" height="22"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </header>
+    <section class="hero" style="padding-top:36px">
+      <p class="hero-label">Saldo</p>
+      <h1 class="hero-amount" id="walletBalance">0.00 $</h1>
+    </section>
+    <div class="wallets-list">
+      <div class="wallet-group-header">
+        <span class="wallet-group-name">Efectivo</span>
+        <span class="wallet-group-total" id="walletCash">0.00 $</span>
+      </div>
+      <div class="wallet-row">
+        <div class="wallet-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20"><rect x="2" y="5" width="20" height="14" rx="3"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
         </div>
-        <div class="header-actions">
-          <button class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema" title="Modo oscuro / claro">
-            <span class="icon-sun">☀️</span>
-            <span class="icon-moon">🌙</span>
-          </button>
-          <button class="icon-btn add-btn-mobile" onclick="openModal()" aria-label="Agregar">+</button>
-          <button class="menu-btn" onclick="toggleMenu()" aria-label="Menú">
-            <span></span><span></span>
-          </button>
-        </div>
-      </header>
+        <span class="wallet-name">Efectivo</span>
+        <span class="wallet-balance" id="walletCashRow">0.00 $</span>
+      </div>
+    </div>
+  </div>
 
-      <main class="main">
+</div><!-- /app -->
 
-        <!-- ── Balance cards ── -->
-        <section class="balance-section" aria-label="Balance">
-          <div class="balance-card" id="balanceCard">
-            <p class="balance-label">Tu balance</p>
-            <div class="balance-row">
-              <span class="balance-amount" id="balanceDisplay">$0.00</span>
-              <button class="add-btn-circle" onclick="openModal()" aria-label="Agregar transacción">
-                <span>+</span>
-              </button>
-            </div>
-            <div class="balance-stats">
-              <div class="stat income" id="statIncome">
-                <div class="stat-icon">↑</div>
-                <div>
-                  <span class="stat-label">Ingresos</span>
-                  <span class="stat-value" id="totalIncome">$0.00</span>
-                </div>
-              </div>
-              <div class="stat-divider"></div>
-              <div class="stat expense" id="statExpense">
-                <div class="stat-icon">↓</div>
-                <div>
-                  <span class="stat-label">Gastos</span>
-                  <span class="stat-value" id="totalExpenses">$0.00</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <button class="bnav-btn active" data-tab="home"    onclick="setTab('home')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="22" height="22"><path d="M17 16L21 12 17 8"/><path d="M7 8L3 12 7 16"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+  </button>
+  <button class="bnav-btn" data-tab="stats"   onclick="setTab('stats')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="22" height="22"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+  </button>
+  <button class="bnav-btn" data-tab="budgets" onclick="setTab('budgets')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="22" height="22"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><line x1="7" y1="8" x2="9" y2="8"/><line x1="7" y1="17" x2="12" y2="17"/></svg>
+  </button>
+  <button class="bnav-btn" data-tab="wallets" onclick="setTab('wallets')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="22" height="22"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+  </button>
+  <!-- Speed-dial trigger -->
+  <button class="bnav-add" id="speedDialTrigger" onclick="toggleSpeedDial()" aria-label="Acciones">
+    <svg class="sd-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" width="24" height="24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    <svg class="sd-icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" width="22" height="22" style="display:none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+</nav>
 
-        <!-- ── Chart ── -->
-        <section class="chart-section" aria-label="Gráfico">
-          <div class="chart-card">
-            <div class="chart-card-header">
-              <h2 class="chart-title">Evolución</h2>
-              <div class="period-tabs" role="tablist">
-                <button class="tab" data-period="dia"    onclick="changePeriod('dia')"    role="tab">Día</button>
-                <button class="tab" data-period="semana" onclick="changePeriod('semana')" role="tab">Semana</button>
-                <button class="tab active" data-period="mes" onclick="changePeriod('mes')" role="tab" aria-selected="true">Mes</button>
-                <button class="tab" data-period="año"   onclick="changePeriod('año')"    role="tab">Año</button>
-              </div>
-            </div>
-            <div class="chart-wrapper">
-              <canvas id="financeChart" aria-label="Gráfico de finanzas"></canvas>
-              <div class="chart-tooltip" id="chartTooltip" role="tooltip"></div>
-            </div>
-          </div>
-        </section>
+<!-- Speed-dial backdrop -->
+<div class="sd-backdrop" id="sdBackdrop" onclick="closeSpeedDial()"></div>
 
-        <!-- ── Transactions ── -->
-        <section class="transactions-section" aria-label="Transacciones recientes">
-          <div class="transactions-header">
-            <h2>Transacciones recientes</h2>
-            <button class="btn-ai-small" onclick="openAIPanel()" aria-label="Analizar con IA">
-              ✨ IA
-            </button>
-          </div>
-          <div id="transactionsList" role="list">
-            <div class="empty-state">
-              <div class="empty-icon">💳</div>
-              <p>No hay transacciones todavía</p>
-              <button class="btn-empty-add" onclick="openModal()">Agregar primera transacción</button>
-            </div>
-          </div>
-        </section>
+<!-- Speed-dial buttons (appear above the + button) -->
+<div class="speed-dial" id="speedDial">
+  <div class="sd-item" id="sdVoice" onclick="openVoiceAI()" style="--d:0">
+    <span class="sd-label">Hablar con IA</span>
+    <button class="sd-btn voice-btn" aria-label="Hablar con IA">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="22" height="22"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+    </button>
+  </div>
+  <div class="sd-item" id="sdChat" onclick="openAIPanel();closeSpeedDial()" style="--d:1">
+    <span class="sd-label">Chat con IA</span>
+    <button class="sd-btn chat-btn" aria-label="Chat con IA">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="22" height="22"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </button>
+  </div>
+  <div class="sd-item" id="sdNew" onclick="openModal();closeSpeedDial()" style="--d:2">
+    <span class="sd-label">Nueva transacción</span>
+    <button class="sd-btn new-btn" aria-label="Nueva transacción">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" width="22" height="22"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
+  </div>
+</div>
 
-      </main>
-    </div><!-- /main-content -->
-  </div><!-- /app-layout -->
+<!-- VOICE AI PANEL -->
+<div class="voice-panel" id="voicePanel">
+  <button class="voice-close" onclick="closeVoiceAI()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
 
+<!-- VOICE AI PANEL — full redesign -->
+<div class="voice-panel" id="voicePanel">
 
-  <!-- ══ MODAL: Nueva transacción ══════════════════════ -->
-  <div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
-  <div class="modal" id="transactionModal" role="dialog" aria-modal="true" aria-label="Nueva transacción">
-    <div class="modal-drag-handle"></div>
-    <h2>Nueva transacción</h2>
+  <!-- Animated border glow edges -->
+  <div class="vp-border-glow"></div>
+  <div class="vp-corner vp-corner-tl"></div>
+  <div class="vp-corner vp-corner-tr"></div>
+  <div class="vp-corner vp-corner-bl"></div>
+  <div class="vp-corner vp-corner-br"></div>
+  <div class="vp-edge-top"></div>
+  <div class="vp-edge-bottom"></div>
+  <div class="vp-edge-left"></div>
+  <div class="vp-edge-right"></div>
 
-    <div class="type-toggle" role="group" aria-label="Tipo de transacción">
-      <button class="type-btn active" id="btnIngreso" onclick="setType('ingreso')">💰 Ingreso</button>
-      <button class="type-btn"        id="btnGasto"   onclick="setType('gasto')">💸 Gasto</button>
+  <!-- Starfield canvas -->
+  <canvas class="vp-canvas" id="vpCanvas"></canvas>
+
+  <!-- Close -->
+  <button class="voice-close" onclick="closeVoiceAI()" aria-label="Cerrar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+
+  <!-- Central: orb + rings (like reference image) -->
+  <div class="vp-center">
+    <div class="vp-orb-wrap" id="voiceOrbWrap">
+      <div class="vp-ring" style="--rs:1.0;--rd:0s"></div>
+      <div class="vp-ring" style="--rs:1.3;--rd:.3s"></div>
+      <div class="vp-ring" style="--rs:1.65;--rd:.6s"></div>
+      <div class="vp-ring" style="--rs:2.05;--rd:.9s"></div>
+      <div class="vp-ring" style="--rs:2.5;--rd:1.2s"></div>
+      <div class="vp-orb" id="voiceOrb" onclick="toggleVoice()">
+        <div class="vp-orb-glow"></div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.92)" stroke-width="1.8" width="38" height="38">
+          <path d="M12 2a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/>
+          <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
+          <line x1="12" y1="18" x2="12" y2="22"/>
+          <line x1="8" y1="22" x2="16" y2="22"/>
+        </svg>
+      </div>
     </div>
 
+    <!-- Transcript — animated text (no bubble frame, just text floating) -->
+    <div class="vp-transcript" id="vpTranscriptArea">
+      <p class="vp-transcript-text" id="vpTranscriptText"></p>
+    </div>
+
+    <!-- AI response -->
+    <div class="vp-ai-resp" id="vpAiResponse">
+      <p id="vpAiText"></p>
+    </div>
+
+    <!-- Status -->
+    <p class="vp-status" id="voiceStatus">Escuchando...</p>
+  </div>
+
+</div>
+
+<!-- MODAL: Nueva transacción -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
+<div class="modal" id="transactionModal" role="dialog" aria-modal="true">
+  <div class="drag-handle"></div>
+  <h2 class="modal-title">Nueva transacción</h2>
+  <div class="type-toggle">
+    <button class="type-btn active" id="btnIngreso" onclick="setType('ingreso')">💰 Ingreso</button>
+    <button class="type-btn"        id="btnGasto"   onclick="setType('gasto')">💸 Gasto</button>
+  </div>
+  <div class="form-group">
+    <label>Descripción</label>
+    <div class="input-ai-row">
+      <input type="text" id="descInput" placeholder="ej. Salario, Supermercado..." autocomplete="off"/>
+      <button class="ai-suggest-btn" onclick="aiSuggestCategory()">✨</button>
+    </div>
+  </div>
+  <div class="form-row2">
     <div class="form-group">
-      <label for="descInput">Descripción</label>
-      <div class="input-with-ai">
-        <input type="text" id="descInput" placeholder="ej. Salario, Supermercado..." autocomplete="off" />
-        <button class="btn-ai-suggest" onclick="aiSuggestCategory()" title="Sugerir categoría con IA" aria-label="Sugerir categoría">✨</button>
-      </div>
+      <label>Monto</label>
+      <input type="number" id="amountInput" placeholder="0.00" min="0" step="0.01" inputmode="decimal"/>
     </div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label for="amountInput">Monto</label>
-        <input type="number" id="amountInput" placeholder="0.00" min="0" step="0.01" inputmode="decimal" />
-      </div>
-      <div class="form-group">
-        <label for="dateInput">Fecha</label>
-        <input type="date" id="dateInput" />
-      </div>
-    </div>
-
     <div class="form-group">
-      <label for="categorySelect">Categoría</label>
-      <select id="categorySelect">
-        <option value="">Seleccionar...</option>
-        <option value="salario">💼 Salario</option>
-        <option value="freelance">💻 Freelance</option>
-        <option value="inversión">📈 Inversión</option>
-        <option value="regalo">🎁 Regalo</option>
+      <label>Fecha</label>
+      <input type="date" id="dateInput"/>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Categoría</label>
+    <select id="categorySelect">
+      <option value="">Seleccionar...</option>
+      <option value="salario">💼 Salario</option>
+      <option value="freelance">💻 Freelance</option>
+      <option value="inversión">📈 Inversión</option>
+      <option value="regalo">🎁 Regalo</option>
+      <option value="comida">🍔 Comida</option>
+      <option value="transporte">🚗 Transporte</option>
+      <option value="salud">🏥 Salud</option>
+      <option value="entretenimiento">🎬 Entretenimiento</option>
+      <option value="ropa">👕 Ropa</option>
+      <option value="hogar">🏠 Hogar</option>
+      <option value="educación">📚 Educación</option>
+      <option value="otro">📌 Otro</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Nota <span class="opt">(opcional)</span></label>
+    <input type="text" id="noteInput" placeholder="Agrega un detalle..."/>
+  </div>
+  <div class="ai-sug" id="aiSuggestion"><span id="aiSuggestionText"></span></div>
+  <div class="modal-actions">
+    <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+    <button class="btn-save"   onclick="saveTransaction()">Guardar</button>
+  </div>
+</div>
+
+<!-- AI PANEL — enhanced with particles & animations -->
+<div class="modal-overlay" id="aiOverlay" onclick="closeAIPanel()"></div>
+<div class="ai-panel" id="aiPanel" role="dialog" aria-modal="true">
+  <div class="drag-handle"></div>
+
+  <!-- Particle canvas background -->
+  <canvas class="ai-particles" id="aiParticles"></canvas>
+
+  <div class="ai-header">
+    <div class="ai-avatar-wrap">
+      <div class="ai-avatar" id="aiAvatarOrb">
+        <div class="ai-avatar-ring"></div>
+        <span>✨</span>
+      </div>
+      <div>
+        <p class="ai-name">Asistente IA</p>
+        <p class="ai-online"><span class="ai-dot"></span>En línea</p>
+      </div>
+    </div>
+    <button class="ai-close" onclick="closeAIPanel()">✕</button>
+  </div>
+
+  <div class="ai-chat" id="aiChat">
+    <div class="ai-msg bot"><p>¡Hola! Soy tu asistente financiero. Puedo analizar tus gastos, registrar transacciones y darte consejos. ¿En qué te ayudo? 🚀</p></div>
+  </div>
+
+  <div class="ai-quick">
+    <button onclick="aiQ('resumen')">📊 Resumen</button>
+    <button onclick="aiQ('consejo')">💡 Consejo</button>
+    <button onclick="aiQ('mayor_gasto')">🔍 Mayor gasto</button>
+    <button onclick="aiQ('ahorro')">💰 Ahorro</button>
+    <button onclick="openVoiceAI();closeAIPanel()">🎙️ Voz</button>
+  </div>
+
+  <div class="ai-input-row">
+    <input id="aiUserInput" placeholder="Escríbeme algo..." onkeydown="if(event.key==='Enter')sendAI()"/>
+    <button class="ai-send-btn" onclick="sendAI()" id="aiSendBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- MODAL: Nombre -->
+<div class="modal-overlay" id="nameOverlay" onclick="closeEditName()"></div>
+<div class="modal small-modal" id="nameModal" role="dialog" aria-modal="true">
+  <div class="drag-handle"></div>
+  <h2 class="modal-title">Tu nombre</h2>
+  <div class="form-group">
+    <label>Nombre</label>
+    <input type="text" id="nameInput" placeholder="¿Cómo te llamas?" maxlength="30"/>
+  </div>
+  <div class="modal-actions">
+    <button class="btn-cancel" onclick="closeEditName()">Cancelar</button>
+    <button class="btn-save"   onclick="saveName()">Guardar</button>
+  </div>
+</div>
+
+<!-- MODAL: Budget -->
+<div class="modal-overlay" id="budgetOverlay" onclick="closeBudgetModal()"></div>
+<div class="modal small-modal" id="budgetModal" role="dialog" aria-modal="true">
+  <div class="drag-handle"></div>
+  <h2 class="modal-title">Nuevo presupuesto</h2>
+  <div class="form-group">
+    <label>Nombre</label>
+    <input type="text" id="budgetNameInput" placeholder="ej. Comida, Transporte..."/>
+  </div>
+  <div class="form-row2">
+    <div class="form-group">
+      <label>Límite</label>
+      <input type="number" id="budgetLimitInput" placeholder="1000" min="1" inputmode="decimal"/>
+    </div>
+    <div class="form-group">
+      <label>Categoría</label>
+      <select id="budgetCatSelect">
+        <option value="">Todas</option>
         <option value="comida">🍔 Comida</option>
         <option value="transporte">🚗 Transporte</option>
         <option value="salud">🏥 Salud</option>
@@ -235,75 +474,17 @@
         <option value="otro">📌 Otro</option>
       </select>
     </div>
-
-    <div class="form-group">
-      <label for="noteInput">Nota <span class="optional">(opcional)</span></label>
-      <input type="text" id="noteInput" placeholder="Agrega un detalle..." />
-    </div>
-
-    <div class="ai-suggestion" id="aiSuggestion">
-      <span id="aiSuggestionText"></span>
-    </div>
-
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
-      <button class="btn-save"   onclick="saveTransaction()">Guardar</button>
-    </div>
   </div>
-
-
-  <!-- ══ AI PANEL ══════════════════════════════════════ -->
-  <div class="modal-overlay" id="aiOverlay" onclick="closeAIPanel()"></div>
-  <div class="ai-panel" id="aiPanel" role="dialog" aria-modal="true" aria-label="Asistente IA">
-    <div class="modal-drag-handle"></div>
-    <div class="ai-panel-header">
-      <div class="ai-header-left">
-        <div class="ai-avatar">✨</div>
-        <div>
-          <h2>Asistente IA</h2>
-          <span class="ai-status">En línea</span>
-        </div>
-      </div>
-      <button onclick="closeAIPanel()" aria-label="Cerrar">✕</button>
-    </div>
-    <div class="ai-chat" id="aiChat" aria-live="polite">
-      <div class="ai-message bot">
-        <p>¡Hola! Soy tu asistente financiero inteligente. Puedo analizar tus gastos, darte consejos de ahorro y responder preguntas sobre tus finanzas. ¿En qué te ayudo hoy? 🚀</p>
-      </div>
-    </div>
-    <div class="ai-quick-actions" role="group" aria-label="Acciones rápidas">
-      <button onclick="aiQuickAnalysis('resumen')">📊 Resumen</button>
-      <button onclick="aiQuickAnalysis('consejo')">💡 Consejo</button>
-      <button onclick="aiQuickAnalysis('mayor_gasto')">🔍 Mayor gasto</button>
-      <button onclick="aiQuickAnalysis('ahorro')">💰 Ahorro</button>
-    </div>
-    <div class="ai-input-row">
-      <input type="text" id="aiUserInput" placeholder="Pregúntame algo..."
-             onkeydown="if(event.key==='Enter') sendAIMessage()" aria-label="Mensaje" />
-      <button onclick="sendAIMessage()" aria-label="Enviar">➤</button>
-    </div>
+  <div class="modal-actions">
+    <button class="btn-cancel" onclick="closeBudgetModal()">Cancelar</button>
+    <button class="btn-save"   onclick="saveBudget()">Crear</button>
   </div>
+</div>
 
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
-  <!-- ══ MODAL: Editar nombre ══════════════════════════ -->
-  <div class="modal-overlay" id="nameOverlay" onclick="closeEditName()"></div>
-  <div class="modal small-modal" id="nameModal" role="dialog" aria-modal="true" aria-label="Editar nombre">
-    <div class="modal-drag-handle"></div>
-    <h2>Tu nombre</h2>
-    <div class="form-group">
-      <label for="nameInput">Nombre</label>
-      <input type="text" id="nameInput" placeholder="¿Cómo te llamas?" maxlength="30" />
-    </div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeEditName()">Cancelar</button>
-      <button class="btn-save"   onclick="saveName()">Guardar</button>
-    </div>
-  </div>
-
-  <!-- ══ Toast ══════════════════════════════════════════ -->
-  <div class="toast" id="toast" role="alert" aria-live="assertive"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="script.js"></script>
+<script src="chart.min.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
